@@ -1,5 +1,6 @@
-class RoomsController < ApplicationController
+require 'eventmachine'
 
+class RoomsController < ApplicationController;
   def index
     @rooms = Room.all
   end
@@ -14,6 +15,15 @@ class RoomsController < ApplicationController
   def show
     @room = Room.where(id: params[:id]).first
     @messages = @room.messages
-  end
 
+    EM.run {
+      client = Faye::Client.new('http://localhost:9292/faye')
+
+      client.subscribe('/messages/3') do |message|
+        puts message.inspect
+      end
+
+      client.publish('/messages/3', 'data' => 'alert()')
+    }
+  end
 end

@@ -1,7 +1,19 @@
 <script type="text/javascript">
   $(function() {
     var faye = new Faye.Client('http://localhost:9292/faye');
+
+    faye.addExtension({
+      outgoing: function(message, callback) {
+        if (message.channel === '/meta/subscribe') {
+          message.ext = message.ext || {};
+          message.ext.username = "Ed";
+        }
+        callback(message);
+      }
+    });
+
     faye.subscribe('/messages/<%= @room.id %>', function (data) {
+      // alert(data);
       eval(data);
     });
   });

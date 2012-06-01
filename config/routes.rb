@@ -1,5 +1,5 @@
 ThinCore::Application.routes.draw do
-  resources :messages
+  resources :messages, :only => [:create]
   resources :rooms
   
   # The priority is based upon order of creation:
